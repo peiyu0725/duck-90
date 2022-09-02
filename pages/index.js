@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
+const GAMETIME = 10
+const DUCKWIDTH = 130
+const BACKGROUNDWIDTH = 1200
+const BACKGROUNDHEIGHT = 900
 
 const Home = () => {
   const [duckPos, setDuckPos] = useState(0)
   const [duckImage, setDuckImage] = useState(1)
-  const counter = useRef(90)
+  const counter = useRef(GAMETIME)
   const gamePlaying = useRef(false)
   const duck = useRef()
   const background = useRef()
@@ -50,11 +54,25 @@ const Home = () => {
       }
       counter.current -= 1
       setDuckImage(val => val < 3 ? val + 1 : 1)
-    }, 1000)
+    }, 900)
+  }
+
+  const startDuckTimer = () => {
+    timer = setInterval(() => {
+      if (!gamePlaying.current || counter.current === 0) return
+      if (isLeft) {
+        if (duck.current.offsetLeft <= background.current.offsetLeft + 121) return
+        setDuckPos(pos => pos - 8)
+      }
+      if (isRight) {
+        if (duck.current.offsetLeft >= background.current.offsetLeft + BACKGROUNDWIDTH - 121 - DUCKWIDTH) return
+        setDuckPos(pos => pos + 8)
+      }
+    }, 15)
   }
 
   const resizeView = () => {
-    setDuckPos(background.current.offsetLeft + 600 - 130 / 2)
+    setDuckPos(background.current.offsetLeft + BACKGROUNDWIDTH / 2 - DUCKWIDTH / 2)
   }
 
   const transTime = (val) => {
@@ -63,22 +81,34 @@ const Home = () => {
     return `0${min}:${sec}`
   }
 
+  const draw = (ctx) => {
+    var img = new Image();
+    img.src = '/images/img_bg.svg';
+    img.onload = function () {
+      var y = 0;
+      var timer = setInterval(function () {
+        ctx.clearRect(0, 0, background.current.width, background.current.height);
+        if (gamePlaying.current && counter.current >= 1 && counter.current < (GAMETIME - 1)) {
+          y++;
+        }
+        if (y >= BACKGROUNDHEIGHT) {
+          y = 0;
+        }
+        ctx.drawImage(img, 0, y);
+        ctx.drawImage(img, 0, 0, BACKGROUNDWIDTH, y + BACKGROUNDHEIGHT, 0,
+          -BACKGROUNDHEIGHT + y, BACKGROUNDWIDTH, y + BACKGROUNDHEIGHT);
+      }, 8)
+    }
+  }
+
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {
-      setDuckPos(background.current.offsetLeft + 600 - 130 / 2)
+      const ctx = background.current.getContext('2d')
+      draw(ctx)
+      setDuckPos(background.current.offsetLeft + BACKGROUNDWIDTH / 2 - DUCKWIDTH / 2)
       startCount()
-      timer = setInterval(() => {
-        if (!gamePlaying.current || counter.current === 0) return
-        if (isLeft) {
-          if (duck.current.offsetLeft <= background.current.offsetLeft + 121) return
-          setDuckPos(pos => pos - 8)
-        }
-        if (isRight) {
-          if (duck.current.offsetLeft >= background.current.offsetLeft + 1200 - 121 - 130) return
-          setDuckPos(pos => pos + 8)
-        }
-      }, 15)
+      startDuckTimer()
       window.addEventListener('resize', resizeView)
       window.addEventListener("keydown", handleUserKeyDown);
       window.addEventListener("keyup", handleUserKeyUp);
@@ -98,10 +128,14 @@ const Home = () => {
       <title>Duck 90!</title>
       <link rel="icon" href="/icon.png" />
       <main>
-        <div className={'pool ' + (counter.current < 90 && counter.current >= 1 ? 'playing ' : '') + (counter.current < 1 ? 'end' : '')}>
-          <img ref={duck} id="duck" src={`/images/duck_normal_${duckImage}.svg`} alt="img_duck" style={{ left: `${duckPos}px`, bottom: gamePlaying.current && counter.current <= 88 ? '160px' : '130px' }} draggable="false" />
+        <div className={'pool ' + (counter.current < GAMETIME && counter.current >= 1 ? 'playing ' : '') + (counter.current < 1 ? 'end' : '')}>
+          <img ref={duck} id="duck"
+            className={(gamePlaying.current && counter.current <= (GAMETIME - 2) ? 'game-playing ' : '') + (counter.current < 1 ? 'game-finish ' : '')}
+            src={`/images/duck_normal_${duckImage}.svg`}
+            alt="img_duck" style={{ left: `${duckPos}px` }} draggable="false" />
+          <div className={'goal ' + (counter.current < 1 ? 'game-finish' : '')}></div>
           <div className="end-line"></div>
-          <div ref={background} className={'page-bg ' + (!gamePlaying.current || counter.current === 0 ? 'stop' : '')}></div>
+          <canvas ref={background} width={BACKGROUNDWIDTH} height={BACKGROUNDHEIGHT}></canvas>
           <div className="start-line"></div>
         </div>
         <div className="counter" style={{ right: background.current ? `calc((100% - ${background.current.width}px) / 2` : 0 }}>

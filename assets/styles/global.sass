@@ -32,12 +32,14 @@ body
     height: 100vh
     background-color: #98dcf7
     overflow: hidden
+
 main
     position: relative
     height: calc(100vh - 50px)
     width: 100%
     overflow: hidden
     transform: translateY(-25px)
+
 .pool
     display: flex
     flex-direction: column
@@ -50,11 +52,24 @@ main
     left: calc(50vw - 1200px / 2)
     transform: translateY(calc(100vh - 900px - 242px - 50px))
     transition-timing-function: linear
-    transition-duration: 1.05s
+    transition-duration: 1s
     &.playing
         transform: translateY(calc(100vh - 900px - 121px - 50px))
     &.end
-        transform: translateY(calc(100vh - 900px - 50px))
+        transform: translateY(calc(100vh - 900px + 35px))
+    .goal
+        position: absolute
+        background-image: url('/images/goal.svg')
+        height: 200px
+        width: 200px
+        top: 77px
+        z-index: 1
+        transition-timing-function: linear
+        transition-duration: .5s
+        opacity: 0
+        &.game-finish
+            opacity: 1
+
     .end-line
         position: absolute
         background-image: url('/images/img_end_line.svg')
@@ -67,24 +82,20 @@ main
         height: 121px
         width: 100%
         bottom: 0
-    .page-bg
-        position: absolute
-        background-image: url('/images/img_bg.svg')
-        height: calc(100% - 242px)
-        width: 100%
-        animation: 8s moveBg 1s linear infinite
-        &.stop
-            animation-play-state: paused
-
-    @keyframes moveBg
-        100%
-            background-position: 0 900px
 
 #duck
     position: absolute
-    z-index: 1
+    z-index: 2
     transition-property: bottom
     transition-duration: 1.05s
+    bottom: 130px
+    &.game-playing
+        bottom: 160px
+    &.game-finish
+        transition-duration: 3.5s
+        transition-property: bottom, left
+        left: calc(50% - 130px / 2) !important
+        bottom: calc(100vh - 121px - 48px)
 
 .counter
     display: flex
@@ -100,6 +111,7 @@ main
     border-radius: 0px 0px 30px 30px
     padding: 23px
     z-index: 2
+    box-shadow: inset 0 -5px #535353
     &-title
         width: 100%
     &-number
