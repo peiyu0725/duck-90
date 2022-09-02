@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
+import FinishDialog from './components/FinishDailog';
+import Overlay from './components/Overlay';
+
 const GAMETIME = 10
 const DUCKWIDTH = 130
 const BACKGROUNDWIDTH = 1200
@@ -143,6 +146,8 @@ const Home = () => {
           <div className="counter-number">{transTime(counter.current)}</div>
         </div>
       </main>
+      <Overlay></Overlay>
+      <FinishDialog></FinishDialog>
     </div>
   )
 }
