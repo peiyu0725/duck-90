@@ -8,6 +8,7 @@ const BACKGROUNDWIDTH = 1200
 const BACKGROUNDHEIGHT = 900
 
 const Home = () => {
+  const [showFinish, setShowFinish] = useState(false)
   const [duckPos, setDuckPos] = useState(0)
   const [duckImage, setDuckImage] = useState(1)
   const counter = useRef(GAMETIME)
@@ -53,6 +54,9 @@ const Home = () => {
       if (!gamePlaying.current) return
       if (counter.current === 0) {
         gamePlaying.current = false
+        setTimeout(() => {
+          setShowFinish(true)
+        }, 2000)
         return
       }
       counter.current -= 1
@@ -104,6 +108,10 @@ const Home = () => {
     }
   }
 
+  const onRestart = () => {
+    window.location.reload(false)
+  }
+
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {
@@ -146,8 +154,13 @@ const Home = () => {
           <div className="counter-number">{transTime(counter.current)}</div>
         </div>
       </main>
-      <Overlay></Overlay>
-      <FinishDialog></FinishDialog>
+      {showFinish &&
+        <>
+          <Overlay></Overlay>
+          <FinishDialog show={showFinish} onRestart={onRestart}></FinishDialog>
+        </>
+      }
+
     </div>
   )
 }

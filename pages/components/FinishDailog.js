@@ -1,21 +1,28 @@
 import { useState, useEffect } from 'react';
 
-const FinishDialog = () => {
+const FinishDialog = ({ show, onRestart }) => {
     const [images, setImages] = useState([1])
+    const [showBtn, setShowBtn] = useState(false)
     let count = 1
     const startShow = () => {
         setTimeout(function () {
             count++;
             if (count <= 3) {
-                console.log(count)
-                setImages(items => {
-                    items.push(count)
-                    return items
-                })
+                const item = images
+                item.push(count)
+                setImages([...item])
                 startShow();
             }
-        }, 2000)
+        }, 1000)
     }
+
+    useEffect((val) => {
+        if (images.length === 3) {
+            setTimeout(function () {
+                setShowBtn(true)
+            }, 1000)
+        }
+    }, [images])
 
     useEffect(() => {
         let isMounted = true;
@@ -25,24 +32,28 @@ const FinishDialog = () => {
         return () => {
             isMounted = false
         }
-    })
+    }, [])
+    if (show) {
+        return (
+            <div className="finish-dialog">
+                <div className="finish-dialog__title">
+                    Congratulations! 恭喜過關!
+                </div>
+                <div className="finish-dialog__images">
+                    {images.map((item, index) =>
+                        <img src={`/images/img_clear_${item}.svg`} key={index} />
+                    )}
+                </div>
+                {showBtn &&
+                    <div className="finish-dialog__btn" onClick={onRestart}>再來一次...</div>
+                }
+            </div>
+        )
+    }
+    else {
+        return null
+    }
 
-    return (
-        <div className="finish-dialog">
-            <div className="finish-dialog__title">
-                Congratulations! 恭喜過關!
-            </div>
-            <div className="finish-dialog__images">
-                {images}
-                {images.map(item=> {
-                    <img src={`/images/img_clear_${item}.svg`}></img>
-                })}
-                
-                {/* <img src="/images/img_clear_2.svg"></img>
-                <img src="/images/img_clear_3.svg"></img> */}
-            </div>
-        </div>
-    )
 }
 
 export default FinishDialog
