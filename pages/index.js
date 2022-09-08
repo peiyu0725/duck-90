@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import FinishDialog from './components/FinishDailog';
 import Overlay from './components/Overlay';
 
-const GAMETIME = 10
+const GAMETIME = 20
 const DUCKWIDTH = 130
 const BACKGROUNDWIDTH = 1200
 const BACKGROUNDHEIGHT = 900
+const SPEED = 8
 
 const Home = () => {
   const [showFinish, setShowFinish] = useState(false)
@@ -17,6 +18,7 @@ const Home = () => {
   const background = useRef()
   let isLeft = false
   let isRight = false
+  let ctx = null
   const timer = null
   const countTimer = null
 
@@ -59,9 +61,13 @@ const Home = () => {
         }, 2000)
         return
       }
+      if (counter.current % 2 === 0) {
+        const readomNum = getRandom(0, 3)
+        drawRandomBall(readomNum)
+      }
       counter.current -= 1
       setDuckImage(val => val < 3 ? val + 1 : 1)
-    }, 900)
+    }, 1000)
   }
 
   const startDuckTimer = () => {
@@ -87,8 +93,30 @@ const Home = () => {
     const sec = val % 60 > 9 ? val % 60 : `0${val % 60}`
     return `0${min}:${sec}`
   }
+  const getRandom = (min, max) => {
+    return Math.floor(Math.random() * max) + min;
+  };
+  const loadImage = src =>
+    new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    })
+    ;
 
-  const draw = (ctx) => {
+  const drawRandomBall = (ballNum) => {
+    const ballArray = Array.from({ length: ballNum }, (v, i) => `/images/ball_${getRandom(1, 5)}.svg`);
+    console.log(ballArray)
+    Promise.all(ballArray.map(loadImage)).then(images => {
+      console.log(images)
+      images.forEach((image, i) =>
+        ctx.drawImage(image, i * 110, 400, image.width, image.height)
+      );
+    })
+  }
+
+  const draw = () => {
     var img = new Image();
     img.src = '/images/img_bg.svg';
     img.onload = function () {
@@ -104,7 +132,7 @@ const Home = () => {
         ctx.drawImage(img, 0, y);
         ctx.drawImage(img, 0, 0, BACKGROUNDWIDTH, y + BACKGROUNDHEIGHT, 0,
           -BACKGROUNDHEIGHT + y, BACKGROUNDWIDTH, y + BACKGROUNDHEIGHT);
-      }, 8)
+      }, SPEED)
     }
   }
 
@@ -115,8 +143,8 @@ const Home = () => {
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {
-      const ctx = background.current.getContext('2d')
-      draw(ctx)
+      ctx = background.current.getContext('2d')
+      draw()
       setDuckPos(background.current.offsetLeft + BACKGROUNDWIDTH / 2 - DUCKWIDTH / 2)
       startCount()
       startDuckTimer()
@@ -137,7 +165,6 @@ const Home = () => {
   return (
     <div className="container">
       <title>Duck 90!</title>
-      <link rel="icon" href="/icon.png" />
       <main>
         <div className={'pool ' + (counter.current < GAMETIME && counter.current >= 1 ? 'playing ' : '') + (counter.current < 1 ? 'end' : '')}>
           <img ref={duck} id="duck"
