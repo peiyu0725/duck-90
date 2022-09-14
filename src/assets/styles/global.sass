@@ -1,14 +1,14 @@
 @font-face
   font-family: 'Roboto-Regular'
-  src: local('Roboto-Regular'), url(/fonts/Roboto-Regular.ttf) format('truetype')
+  src: local('Roboto-Regular'), url(../fonts/Roboto-Regular.ttf) format('truetype')
 
 @font-face
   font-family: 'NotoSansTC-Bold'
-  src: local('NotoSansTC-Bold'), url(/fonts/NotoSansTC-Bold.otf) format('opentype')
+  src: local('NotoSansTC-Bold'), url(../fonts/NotoSansTC-Bold.otf) format('opentype')
 
 @font-face
   font-family: 'NotoSansTC-Medium'
-  src: local('NotoSansTC-Medium'), url(/fonts/NotoSansTC-Medium.otf) format('opentype')
+  src: local('NotoSansTC-Medium'), url(../fonts/NotoSansTC-Medium.otf) format('opentype')
     
 html,
 body
@@ -23,7 +23,7 @@ body
 *
     box-sizing: border-box
     
-.container
+#phaser
     display: flex
     flex-direction: column
     justify-content: center
@@ -59,7 +59,7 @@ main
         transform: translateY(calc(0px))
     .goal
         position: absolute
-        background-image: url('/images/goal.svg')
+        // background-image: url('/images/goal.svg')
         height: 200px
         width: 200px
         top: 77px
@@ -72,13 +72,13 @@ main
 
     .end-line
         position: absolute
-        background-image: url('/images/img_end_line.svg')
+        // background-image: url('/images/img_end_line.svg')
         height: 121px
         width: 100%
         top: 0
     .start-line
         position: absolute
-        background-image: url('/images/img_start_line.svg')
+        // background-image: url('/images/img_start_line.svg')
         height: 121px
         width: 100%
         bottom: 0
@@ -154,7 +154,7 @@ main
             margin: 20px 10px 28px 10px
     &__btn
         cursor: pointer
-        background-image: url('/images/btn_start_off.svg')
+        // background-image: url('/images/btn_start_off.svg')
         width: 150px
         height: 55px
         display: flex
@@ -165,7 +165,7 @@ main
         font-family: NotoSansTC-Medium !important
         color: #ffffff
         &:active
-            background-image: url('/images/btn_start_off-1.svg')
+            // background-image: url('/images/btn_start_off-1.svg')
             height: 50px
             margin-top: 5px
             padding: 0
