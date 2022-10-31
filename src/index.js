@@ -3,22 +3,25 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Phaser from 'phaser'
-import Game from './plugins/Phaser/index.js'
+import GameStart from './plugins/Phaser/GameStart.js'
+import GameEnd from './plugins/Phaser/GameEnd.js'
 import './assets/styles/global.sass'
 
 export const config = {
   type: Phaser.AUTO,
   width: 1200,
-  height: 900,
+  height: window.innerHeight,
   parent: "phaser",
+  backgroundColor: '#98dcf7',
+  disableContextMenu: true,
   physics: {
       default: 'arcade',
       arcade: {
-          gravity: { y: 200 },
+          gravity: { y: 0 },
           debug: true
       }
   },
-  scene: Game
+  scene: [GameStart, GameEnd]
 };
 
 new Phaser.Game(config);
